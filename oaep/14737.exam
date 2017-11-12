@@ -1,0 +1,96 @@
+Q.1 Consider the parameters N = 3551, e = 5, d = 1373, and c = 888, all
+    represented in decimal.  Use them to explain, in your own words, the
+    principle of this attack (e.g., how and why it works).
+
+	This attack takes place in 3 steps, step 1 generates an f1 such that
+	f1*m belongs to the set [B,2B), step 2 uses the f1 to generate an f2
+	such that f2*m belongs to the set [n,n+B), and step 3 takes this
+	upper and lower bound for m and narrows the bound until the upper and
+	lower bounds are the same, therefore giving m.
+
+	Step 1: generate f1
+	We set f1 to be equal to 2, and then test it with the oracle, this is
+	equivalent to computing (f1^e * m)^d mod N, every time the oracle
+	returns that the answer is less than B (B = 256 in our case) f1 is
+	doubled.
+
+	0: f1 = 2, (2^5 * 888)^1373 mod 3551 = 246, which is < B
+	1: f1 = 4, (4^5 * 888)^1373 mod 3551 = 492, which is >= B so this
+	stage halts
+
+	Step 2: generate f2
+	We set f2 = floor((N + B)/B * f1/2 and try it with the oracle, if
+	the oracle indicates that the decoded plaintext is greater than or
+	equal to B f2 is incremented by f1/2.
+
+	0: f2 = 28, (28^5 * 888)^1373 mod 3551 = 3444 which is >= B
+	1: f2 = 30, (30^5 * 888)^1373 mod 3551 =  139 which is < B
+
+	Step 3: shrink the bounds for m until only one value exists
+	We set m_min (the minimum value of the plaintext) to ceil(n/f2),
+	and m_max to floor(n+B/f2) as we know f2*m exists in [n,n+B).
+	We then itterate through, changing either the upper or lower bound
+	depending on the value returned from the oracle.
+
+	0: m_min = 119, m_max = 126,
+	   f_tmp = 73, i = 2, f3 = 60,
+	   (60^5 * 888)^1373 mod 3551 = 278 which is >= B
+	1: m_min = 123, m_max = 126
+	   f_tmp = 170, i = 5, f3 = 145,
+	   (145^5 * 888)^1373 mod 3551 = 80 which is < B
+	2: m_min = 123, m_max = 124
+	   f_tmp = 512, i = 17, f3 = 491,
+	   (491^5 * 888)^1373 mod 3551 = 26 which is < B
+	3: m_min = 123, m_max = 123
+
+	The program terminates when m_min and m_max are the same value,
+	m = 123.
+
+Q.2 To prevent the attack, the vendor suggests altering the software: the
+    idea is that no matter what error occurs, the same error code will be
+    produced.  Explain whether (and why, or why not) this change alone is
+    sufficient.
+
+	This attack requires an oracle which, when sent a ciphertext will
+	return whether the decoded message was beyond B (a boundary 
+	condition given by the maximum integer which can fit in one fewer 
+	bytes than the modulus N). This oracle manifests itself as the
+	presence (or lack thereof) of Error 1 in the response from the
+	provided executable. Error 1 occurs because the decoded plaintext is
+	too large to fit in one fewer octets than the modulus (ie is larger
+	than B). If when we send a ciphertext to the executable, the
+	executable returns Error 1 we know the plaintext exceeded the bounds
+	of B. To combat this attack the software needs to be changed so that
+	this information is not leeked. The suggested change should be 
+	sufficient as this implimentation uses the fact that Error 1 and 2
+	are distinct, Error 1 implying the ciphertext is beyond B, Error 2
+	that it is within the bounds of B (but the validity checking fails).
+	As long as these two errors are obscured and the information is
+	therefor not leaked this attack loses it's oracle and becomes useless.
+
+Q.5 Explain how the concept of plaintext awareness relates to this attack.
+
+	A plaintext aware cryptosystem is one in which it is hard for an 
+	adversary to create a valid ciphertext without knowledge of the
+	root plaintext. In this attack when the ciphertext has been
+	decrypted the provided executable performs an authentication step
+	described in the OAEP algorithm to validate the recieved message
+	against a label and the plaintext. For this system falsifying the
+	label so we have valid (ciphertext,label) combinations is hard, and
+	not required for the attack to work. We are not interested in
+	whether the ciphertext was properly decoded and accepted we are only
+	interested in if the decoded plaintext is too large to fit into one
+	fewer octets than the modulus or not. This attack does not need to
+	overcome the plaintext awareness of the cryptosystem.
+
+Q.6 RSA has a homomorphic property: explain what this means, and how it
+    relates to this attack.
+
+	A homomorphic cryptosystem is one in which manipulating the cyphertext
+	performs a predictable manipulation to the plaintext. In the case of
+	textbook-RSA, 
+	
+	let m = 100, m^e = c (mod N), c * 2^e = c' (mod N), c'^ d = 200 (mod N)
+
+	there is a clear way to manipulate the messages being communicated, to
+	multiply a message by x, one has to multiply a cyphertext by x^e.

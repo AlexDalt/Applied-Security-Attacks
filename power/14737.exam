@@ -1,0 +1,78 @@
+Q.1 As a security consultant, you have been working on a prototype of the
+    attack target; before the product is deployed, the vendor is willing to
+    make any alteration necessary (in software or hardware) to prevent the
+    attack.  Explain the options available, and which one you would
+    recommend.
+
+	One option to defend against a power attack is to impliment some
+	masking. This adds noise to the power trace by fixing the number of 
+	calculations and removing the conditional branches, and therefore
+	it makes the trace more uniform and less dependent on the key.
+	It does not completely eradicate the problem of variable power
+	traces (as the power consumption of a CMOS gate depends on the data)
+	but it does reduce the feesability of a power attack dramatically.
+
+	Alternatively randomising the execution of the algorithm will hide
+	the power trace, as the order in which each byte is computed is
+	obscured the power trace characteristic is harder to follow.
+
+Q.2 The vendor of the attack target opts to replace the 8-bit Intel 8051
+    micro-processor with a modern, 32-bit ARM Cortex-M0; they supplement it
+    with hardware support for that allows single-cycle operations on 32
+    bits of the AES state.  Doing so will naturally reduce the latency of
+    encryption or decryption, but they *also* want to know if it might make
+    the device more secure wrt.  DPA attacks: what is your assessment, and
+    why ?
+
+	Performing more calculations on a given clock cycle is good for 
+	increasing security wrt. power attacks. As the power drawn on each
+	clock cycle is the result of many more calculations and therfore they
+	work to mask each other. An attack similar to the submitted
+	implimentation could be devised but rather than working with 2^8 key
+	hypothesis' it would have to work over a set of 2^32 key hypothesis'
+	this search space is much less feesable. The accuracy would be affected
+	and so many more traces would be required, further rendering an attack
+	less feesable. Although not necessarily a good defence against power
+	attacks, replacing the micro-processor would make power attacks less
+	trivial to run.
+
+Q.4 DPA attacks include a statistical analysis step, for which one option
+    is use of the t-test.  Explain what the difference between a standard
+    t-test and Kocher's method is.  Given that in a DPA attack one might
+    have unequal sets of measurements associated with 0 and 1, is a
+    standard t-test actually an appropriate choice?
+
+	A t-test is a mechanism of statistical analysis between a null
+	hypothesis (H0) and an alternate hypothesis (H1), it works by judging
+	by what measure the calculated mean and standard deviation of a data
+	set deviate from a population mean and standard deviation. H0 is
+	usually that the sample set exists in the population set, and H1 is
+	usually that the two sets are disjoint. The number of measurements
+	associated with each group is not important as the calculation uses
+	the mean and standard deviation. Putting the values for the sample
+	mean, the population mean, and their respective standard deviations
+	into an equation gives the t value, based on this value we can
+	accept or reject the null hypothesis.
+
+	For the Kocher method you seperate the samples into two groups, one
+	where the key bit hypothesis is 0, and the other where the
+	hypothesis is 1. Taking the difference of the means of these two
+	groups gives you a measure of how seperate these sets are.
+
+	In this context a t-test would work but it probably would not garner
+	better results than Kocher's method, and is infact needlessly
+	complicated.
+
+Q.8 The vendor of the attack target decides to use AES-192 rather than
+    AES-128; their argument is that longer keys will naturally improve
+    security in general *and* vs.  DPA attacks.  Explain if and why you
+    agree or disagree with this argument.
+
+	The longer key does improve security against a brute force attack,
+	so they have definitely improved security. But it is still weak
+	against all the attacks implimented in this coursework, including 
+	differential power attacks. The key can be targeted in much the same
+	way and calculated byte-by-byte in much the same way. Adding more
+	calculations does naturally add some noise into the system but it is
+	not enough to consider it more secure against a differential power
+	attack.

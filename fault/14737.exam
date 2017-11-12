@@ -1,0 +1,63 @@
+Q.1 Consider that instead of influencing data (e.g., the AES state), a
+    fault might influence control-flow (e.g., a conditional statement)
+    somehow during execution.  Stating any assumptions you make, give an
+    alternative attack strategy based on this ability.
+
+	Assuming you had enough control to skip round functions (by altering
+	the control-flow) you could skip the final AddRoundKey step, this
+	would give you a version of the ciphertext (C')  which had not been 
+	XORed with the final round key. Therefore C XOR C' = Kr (the final
+	round key).
+
+Q.2 Outline the methods available for hardening this AES implementation
+    against fault attacks; for each method, explain any assumptions you
+    make and compare it with the others wrt.  metrics such as robustness,
+    latency, and memory footprint.
+
+	One method to defend against a fault attack would be randomly
+	affecting the execution time, this would remove the attackers ability
+	to precisely inject a fault and for the most part would render the
+	fault useless. This would make my attack implimentation harder as it
+	requires knowledge of which cell in the state table has been affected.
+	This countermeasure would not change memory footprint but would
+	increase latency.
+
+	Alternatively one could introduce redundancy into the system.
+	Recalculate the result of steps which are sensitive to fault attacks.
+	This method would increase memory footprint and latency but is more
+	robust than randomly varying the execution time as it shields the
+	targets of a fault rather than shuffling them around.
+
+	Another idea would be to impliment error detecting codes. When each
+	stage is calculated a validity code is produced and before the next
+	stage is calculated the integrity of the data is checked against this
+	signature. The frequency of checks and the size of signature can be
+	varied based on how robust a countermeasure one requires. This does 
+	increase memory footprint and latency, although not as much as 
+	introducing redundant calculations despite having a similar effect.
+
+Q.3 The question outlines one method to induce faults (i.e., via a clock
+    glitch).  For the same attack target, construct a set of alternative
+    methods and explain whether they seem applicable given the context.
+
+	You could use a laser to induce a fault in a memory location, although
+	this requires access to the deep innards of a system. The temperature
+	of a system could be changed, although this doesn't require open
+	access to the innards of the machine but this is an imprecise tool
+	probably not suitable for this attack. Also one could underpower the
+	device, which is probably the best alternative to a clock glitch as
+	it can be done with precision without having to point lasers at
+	burried ciruitry.
+
+Q.6 One way to reduce the effectiveness of DPA attacks on AES is to use a
+    masking countermeasure.  Explain if and why the *same* countermeasure
+    could also have an impact on the effectiveness of fault attacks.
+
+	Masking would not work against a fault attack, it can be used to hide
+	the variable power consumption of a process and execution time but it
+	always produces a correct result. It could, however, reduce the 
+	effectiveness of a fault attack as it adds dummy processes which aren't
+	always used (ie are sometimes masked out) therefore the fault would not
+	glean any information from the system. But masking mainly creates
+	uniform execution time and increases the noise on the power trace, so
+	it would not be an effective countermeasure.

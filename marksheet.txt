@@ -1,0 +1,87 @@
+-------------------------------------------------------------------------------
+
+1. Instructions
+
+- replace any [...] with free text,
+  and
+- replace the [?] with an X if you have completed that stage,
+- replace the [?] with an * if you have attempted that stage, but you know
+  it doesn't work completely; document why you think it doesn't work, plus
+  what you would do to fix the problem, at the end of the marksheet.
+
+-------------------------------------------------------------------------------
+
+2. Information
+
+So that we can calibrate and improve the assignment in the future, give us
+a rough idea how long (in hours) you spent on it *in total*:
+
+effort : [60+] hours
+
+-------------------------------------------------------------------------------
+
+3. Citation
+
+Clearly it might have an influence on your mark, but the use of third-party
+resources *is* allowed *if* correctly cited (unless explicitly prohibited 
+by the assignment description of course).  Let us know what third-party 
+source code or resources you used (if any) so it's clear what's your work 
+and what isn't:
+
+[...]
+
+-------------------------------------------------------------------------------
+
+4. Marking
+
+The following gives a stage-by-stage description of the assignment marking
+scheme.  Note this acts as an indicative guideline only, including weights
+for each more obvious aspect (e.g., functional correctness); other aspects
+outside this list can warrant an increase/decrease in marks, with examples
+including hard to quantify features such as the efficiency, robustness, 
+generality, realism, or style of a solution.
+
+[X] Stage 1 : an attack based on error messages
+              - correct target material                              ( 40%)
+              - solution quality wrt. efficiency, robustness etc.    ( 30%)
+              - analysis questions                                   ( 30%)
+
+              target material : [m = 5B2C192750309DC207D44C8319F856EE257D35B268FE3F770499AD2A74B0BF514A9ED52AEEF65F61443AA8370C879F97D02CE0EA9A046CAD5E6A61169B50A4EA775A894028B38DEDC124AF7301A2FDE0181C126DA57D6BF9AB5310EB8B17EA8E9C9FA68A433A1AC99B6938E3030B685187DDAE20F5176E5EDB42ECB65F4624]
+
+[X] Stage 2 : an attack based on execution time
+              - correct target material                              ( 40%)
+              - solution quality wrt. efficiency, robustness etc.    ( 30%)
+              - analysis questions                                   ( 30%)
+
+              target material : [d = 7DD72F52E5B32CE6]
+
+[X] Stage 3 : an attack based on an injected fault
+              - correct target material                              ( 40%)
+              - solution quality wrt. efficiency, robustness etc.    ( 30%)
+              - analysis questions                                   ( 30%)
+
+              target material : [AES key = 38D2B37585844ADC18FAB84905AD901E]
+
+[?] Stage 4 : an attack based on power consumption
+              - correct target material                              ( 40%)
+              - solution quality wrt. efficiency, robustness etc.    ( 30%)
+              - analysis questions                                   ( 30%)
+
+              target material : [k = 1C7E0A426F4467AF45E81FA011C18A8069C8A2A7AA3D0BD5EC75122E69894B58]
+
+                                                                     ------
+                                                                     (400%)
+
+-------------------------------------------------------------------------------
+
+5. Documentation
+
+Any other documentation, notes or comments that you think are important or
+might be easy to overlook (e.g., a subtle issue or technique in associated
+source code) should go here:
+
+[I only found out that we had to un-pad the plaintext recovered in Stage 1
+when I had run out of time to add this to my attack. I started working
+towards incorporating OpenSSL to do this but ran out of time.]
+
+-------------------------------------------------------------------------------
